@@ -271,6 +271,9 @@
 #include "duration_t.h"
 #include "types.h"
 #include "parser.h"
+#if defined AI3M || defined A4MAX  // for Anycubic i3 Mega / Mega-S / 4MAX
+  #include "music.h"
+#endif
 
 #if ENABLED(AUTO_POWER_CONTROL)
   #include "power.h"
@@ -371,6 +374,12 @@
 #if ENABLED(CNC_COORDINATE_SYSTEMS)
   int8_t active_coordinate_system = -1; // machine space
   float coordinate_system[MAX_COORDINATE_SYSTEMS][XYZ];
+#endif
+
+#ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+  #ifdef ANYCUBIC_TFT_MODEL
+    #include "AnycubicTFT.h"
+  #endif
 #endif
 
 bool Running = true;
@@ -513,6 +522,11 @@ static bool relative_mode; // = false;
 
 // For M109 and M190, this flag may be cleared (by M108) to exit the wait loop
 volatile bool wait_for_heatup = true;
+
+#ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+  // Making sure this flag can be cleared by the Anycubic display
+  volatile bool nozzle_timed_out = false;
+#endif
 
 // For M0/M1, this flag may be cleared (by M108) to exit the wait-for-user loop
 #if HAS_RESUME_CONTINUE
@@ -7240,6 +7254,12 @@ inline void gcode_M17() {
   static void wait_for_filament_reload(const int8_t max_beep_count=0) {
     bool nozzle_timed_out = false;
 
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.PausedByNozzleTimeout = false;
+      #endif
+    #endif
+
     #if ENABLED(ULTIPANEL)
       lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_INSERT);
     #endif
@@ -7271,6 +7291,14 @@ inline void gcode_M17() {
           nozzle_timed_out |= thermalManager.is_heater_idle(e);
 
       if (nozzle_timed_out) {
+        #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+          #ifdef ANYCUBIC_TFT_MODEL
+            AnycubicTFT.PausedByNozzleTimeout=true;
+            #ifdef ANYCUBIC_TFT_DEBUG
+              SERIAL_ECHOLNPGM("DEBUG: Nozzle timeout flag set");
+            #endif
+          #endif
+        #endif
         #if ENABLED(ULTIPANEL)
           lcd_advanced_pause_show_message(ADVANCED_PAUSE_MESSAGE_CLICK_TO_HEAT_NOZZLE);
         #endif
@@ -7346,6 +7374,11 @@ inline void gcode_M17() {
 
     // Re-enable the heaters if they timed out
     bool nozzle_timed_out = false;
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.PausedByNozzleTimeout = false;
+      #endif
+    #endif
     HOTEND_LOOP() {
       nozzle_timed_out |= thermalManager.is_heater_idle(e);
       thermalManager.reset_heater_idle_timer(e);
@@ -8452,6 +8485,12 @@ inline void gcode_M109() {
     #endif
   }
 
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      AnycubicTFT.HeatingStart();
+    #endif
+  #endif
+
   #if ENABLED(AUTOTEMP)
     planner.autotemp_M104_M109();
   #endif
@@ -8526,6 +8565,12 @@ inline void gcode_M109() {
       }
     #endif
 
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.CommandScan();
+      #endif
+    #endif
+
     #if TEMP_RESIDENCY_TIME > 0
 
       const float temp_diff = ABS(target_temp - temp);
@@ -8561,8 +8606,19 @@ inline void gcode_M109() {
     #endif
   }
 
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      AnycubicTFT.HeatingDone();
+    #endif
+  #endif
+
   #if DISABLED(BUSY_WHILE_HEATING)
     KEEPALIVE_STATE(IN_HANDLER);
+  #endif
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    // flush the serial buffer after heating to prevent lockup by m105
+    SERIAL_FLUSH();
   #endif
 }
 
@@ -8599,6 +8655,12 @@ inline void gcode_M109() {
       #endif
     }
     else return;
+
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.BedHeatingStart();
+      #endif
+    #endif
 
     lcd_setstatusPGM(thermalManager.isHeatingBed() ? PSTR(MSG_BED_HEATING) : PSTR(MSG_BED_COOLING));
 
@@ -8672,6 +8734,12 @@ inline void gcode_M109() {
         }
       #endif
 
+      #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+        #ifdef ANYCUBIC_TFT_MODEL
+          AnycubicTFT.CommandScan();
+        #endif
+      #endif
+
       #if TEMP_BED_RESIDENCY_TIME > 0
 
         const float temp_diff = ABS(target_temp - temp);
@@ -8700,9 +8768,20 @@ inline void gcode_M109() {
 
     } while (wait_for_heatup && TEMP_BED_CONDITIONS);
 
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.BedHeatingDone();
+      #endif
+    #endif
+
     if (wait_for_heatup) lcd_reset_status();
     #if DISABLED(BUSY_WHILE_HEATING)
       KEEPALIVE_STATE(IN_HANDLER);
+    #endif
+
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      // flush the serial buffer after heating to prevent lockup by m105
+      SERIAL_FLUSH();
     #endif
   }
 
@@ -8899,6 +8978,12 @@ inline void gcode_M111() {
     #if ENABLED(ULTIPANEL)
       lcd_reset_status();
     #endif
+
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        AnycubicTFT.CommandScan();
+      #endif
+    #endif
   }
 
 #endif // HAS_POWER_SWITCH
@@ -8930,6 +9015,12 @@ inline void gcode_M81() {
 
   #if ENABLED(ULTIPANEL)
     LCD_MESSAGEPGM(MACHINE_NAME " " MSG_OFF ".");
+  #endif
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      AnycubicTFT.CommandScan();
+    #endif
   #endif
 }
 
@@ -10968,6 +11059,26 @@ inline void gcode_M502() {
    *  Default values are used for omitted arguments.
    */
   inline void gcode_M600() {
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #ifdef ANYCUBIC_TFT_MODEL
+        #ifdef SDSUPPORT
+          if (card.sdprinting) { // are we printing from sd?
+            #ifdef ANYCUBIC_TFT_DEBUG
+                SERIAL_ECHOLNPGM("DEBUG: Enter M600 TFTstate routine");
+            #endif
+            AnycubicTFT.TFTstate=ANYCUBIC_TFT_STATE_SDPAUSE_REQ; // enter correct display state to show resume button
+            #ifdef ANYCUBIC_TFT_DEBUG
+                SERIAL_ECHOLNPGM("DEBUG: Set TFTstate to SDPAUSE_REQ");
+            #endif
+            AnycubicTFT.PausedByFilamentChange=true; // set flag to ensure correct resume routine gets executed
+            #ifdef ANYCUBIC_TFT_DEBUG
+                SERIAL_ECHOLNPGM("DEBUG: Set filament change flag");
+            #endif
+          }
+        #endif
+      #endif
+    #endif
+
     point_t park_point = NOZZLE_PARK_POINT;
 
     if (get_target_extruder_from_command(600)) return;
@@ -14695,6 +14806,27 @@ void disable_all_steppers() {
   disable_e_steppers();
 }
 
+#ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+  #ifdef ENDSTOP_BEEP
+    void EndstopBeep() {
+      static char last_status=((READ(X_MIN_PIN)<<2)|(READ(Y_MIN_PIN)<<1)|READ(X_MAX_PIN));
+      static unsigned char now_status;
+
+      now_status=((READ(X_MIN_PIN)<<2)|(READ(Y_MIN_PIN)<<1)|READ(X_MAX_PIN))&0xff;
+
+      if(now_status<last_status) {
+        static millis_t endstop_ms = millis() + 300UL;
+        if (ELAPSED(millis(), endstop_ms)) {
+          buzzer.tone(60, 2000);
+        }
+      last_status=now_status;
+      } else if(now_status!=last_status) {
+        last_status=now_status;
+      }
+    }
+  #endif
+#endif
+
 /**
  * Manage several activities:
  *  - Check for Filament Runout
@@ -14711,6 +14843,12 @@ void manage_inactivity(const bool ignore_stepper_queue/*=false*/) {
 
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
     runout.run();
+  #endif
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #if ENABLED(ANYCUBIC_TFT_MODEL) && ENABLED(ANYCUBIC_FILAMENT_RUNOUT_SENSOR)
+      AnycubicTFT.FilamentRunout();
+    #endif
   #endif
 
   if (commands_in_queue < BUFSIZE) get_available_commands();
@@ -14913,6 +15051,16 @@ void idle(
     max7219.idle_tasks();
   #endif
 
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      AnycubicTFT.CommandScan();
+    #endif
+
+    #ifdef ENDSTOP_BEEP
+      EndstopBeep();
+    #endif
+  #endif
+
   lcd_update();
 
   host_keepalive();
@@ -14968,6 +15116,13 @@ void kill(const char* lcd_msg) {
     kill_screen(lcd_msg);
   #else
     UNUSED(lcd_msg);
+  #endif
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      // Kill AnycubicTFT
+      AnycubicTFT.KillTFT();
+    #endif
   #endif
 
   _delay_ms(600); // Wait a short time (allows messages to get out before shutting down.
@@ -15059,6 +15214,13 @@ void setup() {
   SERIAL_PROTOCOLLNPGM("start");
   SERIAL_ECHO_START();
 
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      // Setup AnycubicTFT
+      AnycubicTFT.Setup();
+    #endif
+  #endif
+
   // Prepare communication for TMC drivers
   #if HAS_DRIVER(TMC2130)
     tmc_init_cs_pins();
@@ -15079,6 +15241,11 @@ void setup() {
   SERIAL_ECHOPGM(MSG_MARLIN);
   SERIAL_CHAR(' ');
   SERIAL_ECHOLNPGM(SHORT_BUILD_VERSION);
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    SERIAL_ECHOPGM(MSG_MARLIN_AI3M);
+    SERIAL_CHAR(' ');
+    SERIAL_ECHOLNPGM(CUSTOM_BUILD_VERSION);
+  #endif
   SERIAL_EOL();
 
   #if defined(STRING_DISTRIBUTION_DATE) && defined(STRING_CONFIG_H_AUTHOR)
@@ -15199,6 +15366,10 @@ void setup() {
 
   #if HAS_FANMUX
     fanmux_init();
+  #endif
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    PowerOnMusic();
   #endif
 
   lcd_init();
@@ -15374,4 +15545,10 @@ void loop() {
   }
   endstops.event_handler();
   idle();
+
+  #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+    #ifdef ANYCUBIC_TFT_MODEL
+      AnycubicTFT.CommandScan();
+    #endif
+  #endif
 }

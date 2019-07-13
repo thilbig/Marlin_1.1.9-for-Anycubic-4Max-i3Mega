@@ -37,6 +37,11 @@
    */
   #define SHORT_BUILD_VERSION "1.1.9"
 
+  #if defined AI3M || defined A4MAX  // for Anycubic i3 Mega / Mega-S / 4MAX
+    // shows the custom build version
+    #define CUSTOM_BUILD_VERSION "v1.0.0"
+  #endif
+
   /**
    * Verbose version identifier which should contain a reference to the location
    * from where the binary was downloaded or the source code was compiled.
@@ -48,7 +53,11 @@
    * here we define this default string as the date where the latest release
    * version was tagged.
    */
-  #define STRING_DISTRIBUTION_DATE "2018-08-01"
+  #if defined AI3M || defined A3MAX  // for Anycubic i3 Mega / Mega-S / 4MAX
+    #define STRING_DISTRIBUTION_DATE "2019-05-05"
+  #else  
+    #define STRING_DISTRIBUTION_DATE "2018-08-01"
+  #endif
 
   /**
    * Required minimum Configuration.h and Configuration_adv.h file versions.

@@ -206,9 +206,17 @@ private:
 
 #if PIN_EXISTS(SD_DETECT)
   #if ENABLED(SD_DETECT_INVERTED)
-    #define IS_SD_INSERTED (READ(SD_DETECT_PIN) == HIGH)
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #define IS_SD_INSERTED()  READ(SD_DETECT_PIN)
+    #else
+      #define IS_SD_INSERTED (READ(SD_DETECT_PIN) == HIGH)
+    #endif
   #else
-    #define IS_SD_INSERTED (READ(SD_DETECT_PIN) == LOW)
+    #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+      #define IS_SD_INSERTED() !READ(SD_DETECT_PIN)
+    #else
+      #define IS_SD_INSERTED (READ(SD_DETECT_PIN) == LOW)
+    #endif
   #endif
 #else
   // No card detect line? Assume the card is inserted.
