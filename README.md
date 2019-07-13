@@ -1,4 +1,20 @@
-# Marlin 3D Printer Firmware
+# Anycubic i3 Mega / Mega-S and 4Max Marlin 1.1.9 by thilbig
+This is a custom version of the [Marlin Firmware](https://github.com/MarlinFirmware/Marlin) for the i3 Mega/Mega-S, gratefully based on [davidramiro's repo](https://github.com/davidramiro/Marlin-Ai3M) and [derhopp's repo](https://github.com/derhopp/Marlin-with-Anycubic-i3-Mega-TFT) with his remarkable efforts to get the Anycubic i3Mega TFT screen to work with the latest versions of Marlin.
+
+## Known issues i3Mega / 4Max:
+- Power outage support is not included
+- Estimated print times from your slicer might be slightly off.
+- Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
+**Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
+
+## Changes by [derhopp](https://github.com/derhopp/) for Anycubic i3Mega:
+- 12V capability on FAN0 (parts cooling fan) enabled
+- Buzzer disabled (e.g. startup beep)
+- Subdirectory support: Press the round arrow after selecting a directory
+- Special menu in the SD file menu: Press the round arrow after selecting `Special menu`
+
+# About Marlin
+## Marlin 3D Printer Firmware
 <img align="right" src="../../raw/1.1.x/buildroot/share/pixmaps/logo/marlin-250.png" />
 
 ## Marlin 1.1
