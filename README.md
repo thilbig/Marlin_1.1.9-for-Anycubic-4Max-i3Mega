@@ -7,11 +7,25 @@ This is a custom version of the [Marlin Firmware](https://github.com/MarlinFirmw
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
 
+## Changes by [davidramiro](https://github.com/davidramiro/Marlin-Ai3M) for Anycubic i3Mega:
+- include all changes from [derhopp](https://github.com/derhopp/)
+- added Mesh Bed Leveling
+- added Much more efficient bed heating
+- added better print quality by adding Linear Advance, S-Curve Acceleration and some tweaks on jerk and acceleration
+- added Thermal runaway protection
+- Easily start an auto PID tune or mesh bed leveling
+- Filament change feature enabled
+
 ## Changes by [derhopp](https://github.com/derhopp/) for Anycubic i3Mega:
 - 12V capability on FAN0 (parts cooling fan) enabled
 - Buzzer disabled (e.g. startup beep)
 - Subdirectory support: Press the round arrow after selecting a directory
 - Special menu in the SD file menu: Press the round arrow after selecting `Special menu`
+
+## Are there pre-compiled firmware files?
+No!
+I have decided **NOT** to provide precompiled hex files. Due to various settings which are necessary for the use of your i3Mega or 4Max, this does not make sense and can only lead to problems.  
+However, it is not difficult to compile the firmware yourself :-)
 
 # About Marlin
 ## Marlin 3D Printer Firmware
