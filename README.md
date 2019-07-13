@@ -1,5 +1,5 @@
 # Anycubic i3 Mega / Mega-S and 4Max Marlin 1.1.9 by thilbig
-This is a custom version of the [Marlin Firmware](https://github.com/MarlinFirmware/Marlin) for the i3 Mega/Mega-S, gratefully based on [davidramiro's repo](https://github.com/davidramiro/Marlin-Ai3M) and [derhopp's repo](https://github.com/derhopp/Marlin-with-Anycubic-i3-Mega-TFT) with his remarkable efforts to get the Anycubic i3Mega TFT screen to work with the latest versions of Marlin. It comes without any warrenty.
+This is a custom version of the [Marlin Firmware](https://github.com/MarlinFirmware/Marlin) for the i3 Mega/Mega-S, gratefully based on [davidramiro's repo](https://github.com/davidramiro/Marlin-Ai3M) and [derhopp's repo](https://github.com/derhopp/Marlin-with-Anycubic-i3-Mega-TFT) with his remarkable efforts to get the Anycubic i3Mega TFT screen to work with the latest versions of Marlin. It comes without any warranty.
 
 ## Known issues i3Mega / 4Max:
 - Power outage support is not included
