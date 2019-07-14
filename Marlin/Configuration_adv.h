@@ -821,7 +821,7 @@
  * See http://marlinfw.org/docs/features/lin_advance.html for full instructions.
  * Mention @Sebastianv650 on GitHub to alert the author of any issues.
  */
-#if defined AI3M || defined A4MAX  // for Anycubic i3 Mega / Mega-S / 4MAX
+#if defined AI3M //|| defined A4MAX  // for Anycubic i3 Mega / Mega-S / 4MAX
   #define LIN_ADVANCE
 #endif
 #if ENABLED(LIN_ADVANCE)
@@ -883,6 +883,9 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
+#ifdef A4MAX  // for Anycubic 4Max
+  #define MINIMUM_STEPPER_DIR_DELAY 20
+#endif
 //#define MINIMUM_STEPPER_DIR_DELAY 650
 
 /**
@@ -896,6 +899,9 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
+#ifdef A4MAX  // for Anycubic 4Max
+  #define MINIMUM_STEPPER_PULSE 2
+#endif
 //#define MINIMUM_STEPPER_PULSE 2
 
 /**
@@ -910,6 +916,9 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
+#ifdef A4MAX  // for Anycubic 4Max
+  #define MAXIMUM_STEPPER_RATE 400000
+#endif
 //#define MAXIMUM_STEPPER_RATE 250000
 
 // @section temperature

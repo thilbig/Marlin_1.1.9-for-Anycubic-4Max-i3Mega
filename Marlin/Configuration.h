@@ -726,7 +726,7 @@
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 384 } // for Mega-S
 #else
 #ifdef A4MAX // for Anycubic 4Max
-  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 92.6 }
+  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
 #else
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 4000, 500 }
 #endif
@@ -757,8 +757,8 @@
   #define DEFAULT_MAX_ACCELERATION      { 2000, 1200,  60, 10000 }
 #else
 #ifdef A4MAX // for Anycubic 4Max
-  //#define DEFAULT_MAX_ACCELERATION      { 1500, 1500, 75, 7000 }
-  #define DEFAULT_MAX_ACCELERATION      { 2000, 2000, 100, 10000 }  // Values from AFR
+  #define DEFAULT_MAX_ACCELERATION      { 1500, 1500, 75, 7000 }
+  //define DEFAULT_MAX_ACCELERATION      { 2000, 2000, 100, 10000 }  // Values from AFR
 #else
   #define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 10000 }
 #endif
@@ -797,17 +797,23 @@
  * value set here, it may happen instantaneously.
  */
 #ifdef AI3M  // for Anycubic i3 Mega / Mega-S
-  #define DEFAULT_XJERK                 8.0
-  #define DEFAULT_YJERK                 8.0
+  #define DEFAULT_XJERK                  8.0
+  #define DEFAULT_YJERK                  8.0
   #define DEFAULT_ZJERK                  0.4
   #define DEFAULT_EJERK                  5.0
 #else
 #ifdef A4MAX  // for Anycubic 4Max
+  #define DEFAULT_XJERK                 10.0
+  #define DEFAULT_YJERK                 10.0
+  #define DEFAULT_ZJERK                  0.3
+  #define DEFAULT_EJERK                  5.0
   // Values from AFR
+  /*
   #define DEFAULT_XJERK                  5.0
   #define DEFAULT_YJERK                  5.0
   #define DEFAULT_ZJERK                  0.3
   #define DEFAULT_EJERK                  5.0
+  */
 #else
   #define DEFAULT_XJERK                 10.0
   #define DEFAULT_YJERK                 10.0
@@ -1400,7 +1406,13 @@
 
 // Homing speeds (mm/m)
 #define HOMING_FEEDRATE_XY (50*60)
-#define HOMING_FEEDRATE_Z  (4*60)
+#ifdef AI3M  // for Anycubic i3 Mega / Mega-S
+  #define HOMING_FEEDRATE_Z  (4*60)
+#else
+#ifdef A4MAX // for Anycubic 4Max
+  #define HOMING_FEEDRATE_Z  (10*60)
+#endif
+#endif
 
 // @section calibrate
 
@@ -1476,7 +1488,7 @@
 #if defined AI3M || defined A4MAX  // for Anycubic i3 Mega / Mega-S /4MAX
   #define EEPROM_SETTINGS // Enable for M500 and M501 commands
 #endif
-//#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
+#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
 
 //
@@ -1486,11 +1498,16 @@
 // every couple of seconds when it can't accept commands.
 //
 #define HOST_KEEPALIVE_FEATURE        // Disable this if your host doesn't like keepalive messages
-#define DEFAULT_KEEPALIVE_INTERVAL 2  // Number of seconds between "busy" messages. Set with M113.
-#if defined AI3M || defined A4MAX // for Anycubic i3 Mega / Mega-S / 4MAX
+#ifdef AI3M   // for Anycubic i3 Mega / Mega-S
+  #define DEFAULT_KEEPALIVE_INTERVAL 2  // Number of seconds between "busy" messages. Set with M113.
   //#define BUSY_WHILE_HEATING            // Some hosts require "busy" messages even during heating
 #else
+#ifdef A4MAX  // for Anycubic 4MAX
+  #define DEFAULT_KEEPALIVE_INTERVAL 4  // Number of seconds between "busy" messages. Set with M113.
   #define BUSY_WHILE_HEATING            // Some hosts require "busy" messages even during heating
+#else
+  #define BUSY_WHILE_HEATING            // Some hosts require "busy" messages even during heating
+#endif
 #endif
 
 //
@@ -1536,7 +1553,7 @@
  *    P1  Raise the nozzle always to Z-park height.
  *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
  */
-#if defined AI3M || A4MAX // for Anycubic i3 Mega / Mega-S / 4MAX
+#if defined AI3M || defined A4MAX // for Anycubic i3 Mega / Mega-S / 4MAX
   #define NOZZLE_PARK_FEATURE
 #endif
 
@@ -1780,7 +1797,11 @@
 //
 // Add individual axis homing items (Home X, Home Y, and Home Z) to the LCD menu.
 //
-//#define INDIVIDUAL_AXIS_HOMING_MENU
+#ifdef A4MAX // for Anycubic 4Max
+  #define INDIVIDUAL_AXIS_HOMING_MENU
+#else
+  //#define INDIVIDUAL_AXIS_HOMING_MENU
+#endif
 
 //
 // SPEAKER/BUZZER
