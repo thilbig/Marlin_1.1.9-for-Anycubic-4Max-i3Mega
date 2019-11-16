@@ -726,8 +726,7 @@
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 384 } // for Mega-S
 #else
 #ifdef A4MAX // for Anycubic 4Max
-  //#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
-  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 95 } // T.H.: 2019-11-10 messured 95
+  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
 #else
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 4000, 500 }
 #endif
