@@ -726,7 +726,8 @@
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 384 } // for Mega-S
 #else
 #ifdef A4MAX // for Anycubic 4Max
-  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+  //#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 95 } // T.H.: 2019-11-10 messured 95
 #else
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 4000, 500 }
 #endif
@@ -1076,6 +1077,9 @@
 //#define NO_MOTION_BEFORE_HOMING  // Inhibit movement until all axes have been homed
 
 //#define UNKNOWN_Z_NO_RAISE // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
+#ifdef A4MAX // for Anycubic 4Max
+  #define UNKNOWN_Z_NO_RAISE // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
+#endif
 
 //#define Z_HOMING_HEIGHT 4  // (in mm) Minimal z height before homing (G28) for Z clearance above the bed, clamps, ...
                              // Be sure you have this distance over your Z_MAX_POS in case.
@@ -1488,8 +1492,8 @@
 #if defined AI3M || defined A4MAX  // for Anycubic i3 Mega / Mega-S /4MAX
   #define EEPROM_SETTINGS // Enable for M500 and M501 commands
 #endif
-#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
-#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
+//#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
+#define EEPROM_CHITCHAT    // Give feedback on EEPROM commands. Disable to save PROGMEM.
 
 //
 // Host Keepalive
